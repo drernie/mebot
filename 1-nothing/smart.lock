@@ -1,0 +1,15 @@
+{
+  "meteor": {},
+  "dependencies": {
+    "basePackages": {
+      "reactive-coffee": {}
+    },
+    "packages": {
+      "reactive-coffee": {
+        "git": "https://github.com/zhouzhuojie/meteor-reactive-coffee.git",
+        "tag": "v0.0.5",
+        "commit": "e9381176dca17e6766ed888d1709231fcf733d39"
+      }
+    }
+  }
+}
