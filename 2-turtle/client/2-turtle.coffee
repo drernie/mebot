@@ -6,11 +6,11 @@ Meteor.startup ->
   window.commands = rx.meteor.find Commands, {}, {sort:{created:-1}}
 	
   x_value = ->
-    4
+    5
   y_value = ->
-    4
+    1
   angle = ->
-    3
+    1
 	
   $ ->
     document.title = 'Turtle-Viewer'
@@ -22,7 +22,7 @@ Meteor.startup ->
         style: "height: 4in; width: 4in;"
       }, [
         img {
-          style: "top: #{100*x_value()}px; left: #{100*y_value()}px;
+          style: "top: #{100*y_value()}px; left: #{100*x_value()}px;
   					 		  -webkit-transform: rotate(#{90*angle()}deg);
   				        position: absolute; border: 0; width: 99px; height: 99px;"
           src: 'images/turtle.png'
