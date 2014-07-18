@@ -32,6 +32,10 @@ Meteor.startup ->
             false # In IE, don't set focus on the utton(crazy!)
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
       }
+      h1 "Roster"
+      ul {}, sprites.all().map (sprite) ->
+        li sprite.title
+      
       h1 "Controls"
       ul {}, [
         li {}, [
@@ -44,7 +48,6 @@ Meteor.startup ->
         ]
         li {}, [
           button {class: 'submit-btn', title: 'West'}, ['◀︎']
-          span "(#{x.get()}, #{y.get()}) -> #{facing.get()}"
           button {class: 'submit-btn', title: 'East'}, ['►']
         ]
         li {}, [
@@ -60,14 +63,13 @@ Meteor.startup ->
           style:
             top: 10*sprite.y
             left: 10*sprite.x
-  				  position: 'absolute'
             border: 0
             width: 10
             height: 10
+  				  position: absolute
           src: sprite.url
           alt: sprite.title
         }
-      ]
       div {
         id: 'page-footer'
         style: 'margin-top: 100px; text-align:center; text-shadow: white 0.1em 0.1em 0.1em;'
