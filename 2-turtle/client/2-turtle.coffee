@@ -23,8 +23,8 @@ Meteor.startup ->
           if e.which == 13
             SpritesDB.insert
               title: @val().trim()
-              x: 1
-              y: 2
+              x: sprites.length()
+              y: sprites.length()
               facing: 0
               url: 'images/turtle.png'
               created: new Date
@@ -34,8 +34,13 @@ Meteor.startup ->
       }
       h1 "Roster"
       ul {}, sprites.map (sprite) ->
-        li sprite.title
-      
+        li {}, [
+          span sprite.title
+          button {
+            class: 'destroy'
+            click: -> SpritesDB.remove sprite._id
+          }, "Remove"
+      ]
       h1 "Controls"
       ul {}, [
         li {}, [
@@ -54,10 +59,12 @@ Meteor.startup ->
           button {class: 'submit-btn', title: 'South'}, ['⬇']
         ]
       ]
+      h1 "Canvas"
       div {
         class: 'canvas'
         style: "height: 4in; width: 4in;"
-      }, sprites.all().map (sprite) ->
+      }, sprites.map (sprite) ->
+        p sprite.title
         img {
           rotation_style: "-webkit-transform: rotate(#{90*sprite.facing}deg);"
           style:
