@@ -11,6 +11,17 @@ location_style = (sprite) ->
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
   "
+  
+create_sprite = (val, count) ->
+  index = count % 6 
+  SpritesDB.insert
+    title: val.trim()
+    x: index 
+    y: index 
+    facing: 0
+    url: 'images/turtle.png'
+    created: new Date
+  
 
 Meteor.startup ->
   bind = rx.bind
@@ -33,13 +44,7 @@ Meteor.startup ->
         autofocus: true
         keydown: (e) ->
           if e.which == 13
-            SpritesDB.insert
-              title: @val().trim()
-              x: sprites.length()
-              y: sprites.length()
-              facing: 0
-              url: 'images/turtle.png'
-              created: new Date
+            create_sprite(@val(), sprites.length())
             @val('')
             false # In IE, don't set focus on the button(crazy!)
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
@@ -51,7 +56,7 @@ Meteor.startup ->
             class: 'destroy'
             click: -> SpritesDB.remove sprite._id
           }, "X"
-          span {title: "location_style(sprite)"}, sprite.title
+          span {title: location_style(sprite)}, sprite.title
       ]
       h1 "Controls"
       ul {}, [
