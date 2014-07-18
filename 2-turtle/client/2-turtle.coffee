@@ -10,6 +10,7 @@ location_style = (sprite) ->
     left: #{sprite.x * TURTLE_SCALE}px;
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
+    -webkit-transform: rotate(#{90*sprite.facing}deg);
   "
   
 create_sprite = (val, count) ->
@@ -21,7 +22,23 @@ create_sprite = (val, count) ->
     facing: 0
     url: 'images/turtle.png'
     created: new Date
-  
+    
+nav_updown = (dir, arrow) ->
+  button {
+    style: {width: 61}
+    class: "submit-btn dir vertical #{dir}"
+    title: dir
+    click: ->
+      if (dir == 'North') then turtle.y++ else turtle.y--
+  }, arrow
+
+nav_sides = (dir, arrow) ->
+  button {
+    class: "submit-btn dir horizontal #{dir}"
+    title: dir
+    click: ->
+      if (dir == 'East') then turtle.x++ else turtle.x--
+  }, arrow
 
 Meteor.startup ->
   bind = rx.bind
@@ -49,32 +66,24 @@ Meteor.startup ->
             false # In IE, don't set focus on the button(crazy!)
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
       }
-      h1 "Roster"
-      ul {}, sprites.map (sprite) ->
-        li {}, [
-          button {
-            class: 'destroy'
-            click: -> SpritesDB.remove sprite._id
-          }, "X"
-          span {title: location_style(sprite)}, sprite.title
-      ]
       h1 "Controls"
       ul {}, [
         li {}, [
-          button {
-            class: 'submit-btn'
-            title: 'North'
-            click: ->
-              turtle.x = 5
-          }, ['⬆']
+          nav_updown('North', '⬆')
         ]
         li {}, [
-          button {class: 'submit-btn', title: 'West'}, ['◀︎']
-          button {class: 'submit-btn', title: 'East'}, ['►']
+          button {class: 'submit-btn dir', title: 'West'}, ['◀︎']
+          button {class: 'submit-btn dir', title: 'East'}, ['►']
         ]
         li {}, [
-          button {class: 'submit-btn', title: 'South'}, ['⬇']
+          nav_updown('South', '⬇')
         ]
+      ]
+      h1 "Roster"
+      ul {}, sprites.map (sprite) ->
+        li {}, [
+          button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
+          span {title: location_style(sprite)}, sprite.title
       ]
       h1 "Canvas"
       div {
@@ -84,9 +93,9 @@ Meteor.startup ->
           height: 10 * TURTLE_SCALE
       }, sprites.map (sprite) ->
         img {
-          rotation_style: "-webkit-transform: rotate(#{90*sprite.facing}deg);"
           style: location_style(sprite)
           src: sprite.url
+          title: sprite.title
           alt: sprite.title
         }
       div {
