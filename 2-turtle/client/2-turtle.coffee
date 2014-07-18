@@ -1,5 +1,5 @@
 TURTLE_TITLE = "Rohan\'s Turtle"
-  
+
 Meteor.startup ->
   bind = rx.bind
   rxt.importTags()
@@ -33,7 +33,7 @@ Meteor.startup ->
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
       }
       h1 "Roster"
-      ul {}, sprites.all().map (sprite) ->
+      ul {}, sprites.map (sprite) ->
         li sprite.title
       
       h1 "Controls"
