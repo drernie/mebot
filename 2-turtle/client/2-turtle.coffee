@@ -35,11 +35,11 @@ Meteor.startup ->
       h1 "Roster"
       ul {}, sprites.map (sprite) ->
         li {}, [
-          span sprite.title
           button {
             class: 'destroy'
             click: -> SpritesDB.remove sprite._id
-          }, "Remove"
+          }, "X"
+          span {title: "#{sprite.x}"}, sprite.title
       ]
       h1 "Controls"
       ul {}, [
