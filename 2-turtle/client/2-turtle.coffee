@@ -67,17 +67,13 @@ Meteor.startup ->
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
       }
       h1 "Controls"
-      ul {}, [
-        li {}, [
-          nav_updown('North', '⬆')
-        ]
-        li {}, [
+      ul [
+        li nav_updown('North', '⬆')
+        li [
           button {class: 'submit-btn dir', title: 'West'}, ['◀︎']
           button {class: 'submit-btn dir', title: 'East'}, ['►']
         ]
-        li {}, [
-          nav_updown('South', '⬇')
-        ]
+        li nav_updown('South', '⬇')
       ]
       h1 "Roster"
       ul {}, sprites.map (sprite) ->
