@@ -5,14 +5,14 @@ Meteor.startup ->
   # Put some data into tasks
   window.commands = rx.meteor.find Commands, {}, {sort:{created:-1}}
 	
-  x = rx.cell()
-  x.set(5)
-  y = rx.cell()
-  y.set(3)
-  facing = rx.cell()
-  facing.set(2)
 	
   $ ->
+    x = rx.cell()
+    x.set(5)
+    y = rx.cell()
+    y.set(3)
+    facing = rx.cell()
+    facing.set(2)
     document.title = 'Turtle-Viewer'
 		
     $('body').prepend(
@@ -23,6 +23,8 @@ Meteor.startup ->
           button {
             class: 'submit-btn'
             title: 'North'
+            click: ->
+              x.set(2)
           }, ['⬆']
         ]
         li {}, [
