@@ -1,4 +1,16 @@
 TURTLE_TITLE = "Rohan\'s Turtle"
+TURTLE_SCALE = 100
+
+
+location_style = (sprite) ->
+  "
+    position: absolute;
+    border: 0;
+    top: #{sprite.y * TURTLE_SCALE}px;
+    left: #{sprite.x * TURTLE_SCALE}px;
+    width: #{TURTLE_SCALE}px;
+    height: #{TURTLE_SCALE}px;
+  "
 
 Meteor.startup ->
   bind = rx.bind
@@ -29,7 +41,7 @@ Meteor.startup ->
               url: 'images/turtle.png'
               created: new Date
             @val('')
-            false # In IE, don't set focus on the utton(crazy!)
+            false # In IE, don't set focus on the button(crazy!)
             # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
       }
       h1 "Roster"
@@ -39,7 +51,7 @@ Meteor.startup ->
             class: 'destroy'
             click: -> SpritesDB.remove sprite._id
           }, "X"
-          span {title: "#{sprite.x}"}, sprite.title
+          span {title: "location_style(sprite)"}, sprite.title
       ]
       h1 "Controls"
       ul {}, [
@@ -62,18 +74,13 @@ Meteor.startup ->
       h1 "Canvas"
       div {
         class: 'canvas'
-        style: "height: 4in; width: 4in;"
+        style:
+          width: 10 * TURTLE_SCALE
+          height: 10 * TURTLE_SCALE
       }, sprites.map (sprite) ->
-        p sprite.title
         img {
           rotation_style: "-webkit-transform: rotate(#{90*sprite.facing}deg);"
-          style:
-            top: 10*sprite.y
-            left: 10*sprite.x
-            border: 0
-            width: 10
-            height: 10
-  				  position: absolute
+          style: location_style(sprite)
           src: sprite.url
           alt: sprite.title
         }
