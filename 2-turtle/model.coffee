@@ -1,2 +1,2 @@
-@Commands = new Meteor.Collection 'commands'
-@Positions = new Meteor.Collection 'positions'
+@CommandsDB = new Meteor.Collection 'commands'
+@SpritesDB = new Meteor.Collection 'sprites'

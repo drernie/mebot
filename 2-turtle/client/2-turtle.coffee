@@ -3,8 +3,8 @@ Meteor.startup ->
   rxt.importTags()
 
   # Put some data into tasks
-  window.commands = rx.meteor.find Commands, {}, {sort:{created:-1}}
-	
+  window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
+  window.sprites = rx.meteor.find SpritesDB, {}, {sort:{created:-1}}
 	
   $ ->
     x = rx.cell()
