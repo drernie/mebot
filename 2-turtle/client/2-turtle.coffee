@@ -1,3 +1,5 @@
+TURTLE_TITLE = "Rohan\'s Turtle"
+  
 Meteor.startup ->
   bind = rx.bind
   rxt.importTags()
@@ -5,18 +7,31 @@ Meteor.startup ->
   # Put some data into tasks
   window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
   window.sprites = rx.meteor.find SpritesDB, {}, {sort:{created:-1}}
+  window.turtle = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
 	
   $ ->
-    x = rx.cell()
-    x.set(5)
-    y = rx.cell()
-    y.set(3)
-    facing = rx.cell()
-    facing.set(2)
     document.title = 'Turtle-Viewer'
 		
     $('body').prepend(
-      h1 "Rohan\'s Turtle"
+      h1 TURTLE_TITLE
+      input {
+        id: 'new-turtle-name'
+        type: 'text'
+        placeholder: 'Name a new turtle'
+        autofocus: true
+        keydown: (e) ->
+          if e.which == 13
+            SpritesDB.insert
+              title: @val().trim()
+              x: 1
+              y: 2
+              facing: 0
+              url: 'images/turtle.png'
+              created: new Date
+            @val('')
+            false # In IE, don't set focus on the utton(crazy!)
+            # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
+      }
       h1 "Controls"
       ul {}, [
         li {}, [
@@ -24,7 +39,7 @@ Meteor.startup ->
             class: 'submit-btn'
             title: 'North'
             click: ->
-              x.set(2)
+              turtle.x = 5
           }, ['⬆']
         ]
         li {}, [
@@ -39,13 +54,18 @@ Meteor.startup ->
       div {
         class: 'canvas'
         style: "height: 4in; width: 4in;"
-      }, [
+      }, sprites.all().map (sprite) ->
         img {
-          style: "top: #{100*y.get()}px; left: #{100*x.get()}px;
-  					 		  -webkit-transform: rotate(#{90*facing.get()}deg);
-  				        position: absolute; border: 0; width: 99px; height: 99px;"
-          src: 'images/turtle.png'
-          alt: "Rohan\'s Turtle"
+          rotation_style: "-webkit-transform: rotate(#{90*sprite.facing}deg);"
+          style:
+            top: 10*sprite.y
+            left: 10*sprite.x
+  				  position: 'absolute'
+            border: 0
+            width: 10
+            height: 10
+          src: sprite.url
+          alt: sprite.title
         }
       ]
       div {
