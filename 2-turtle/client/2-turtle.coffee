@@ -1,18 +1,6 @@
 TURTLE_TITLE = "Rohan\'s Turtle"
 TURTLE_SCALE = 100
 
-
-location_style = (sprite) ->
-  "
-    position: absolute;
-    border: 0;
-    top: #{sprite.y * TURTLE_SCALE}px;
-    left: #{sprite.x * TURTLE_SCALE}px;
-    width: #{TURTLE_SCALE}px;
-    height: #{TURTLE_SCALE}px;
-    -webkit-transform: rotate(#{90*sprite.facing}deg);
-  "
-  
 create_sprite = (val, count) ->
   index = count % 6 
   SpritesDB.insert
@@ -22,6 +10,20 @@ create_sprite = (val, count) ->
     facing: 0
     url: 'images/turtle.png'
     created: new Date
+    
+input_turtle = ->
+  input {
+    id: 'new-turtle-name'
+    type: 'text'
+    placeholder: 'Name a new turtle'
+    autofocus: true
+    keydown: (e) ->
+      if e.which == 13
+        create_sprite(@val(), sprites.length())
+        @val('')
+        false # In IE, don't set focus on the button(crazy!)
+        # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
+  }
     
 nav_updown = (dir, arrow) ->
   button {
@@ -39,7 +41,18 @@ nav_sides = (dir, arrow) ->
     click: ->
       if (dir == 'East') then turtle.x++ else turtle.x--
   }, arrow
-
+  
+location_style = (sprite) ->
+  "
+    position: absolute;
+    border: 0;
+    top: #{sprite.y * TURTLE_SCALE}px;
+    left: #{sprite.x * TURTLE_SCALE}px;
+    width: #{TURTLE_SCALE}px;
+    height: #{TURTLE_SCALE}px;
+    -webkit-transform: rotate(#{90*sprite.facing}deg);
+  "
+  
 Meteor.startup ->
   bind = rx.bind
   rxt.importTags()
@@ -54,19 +67,10 @@ Meteor.startup ->
 		
     $('body').prepend(
       h1 TURTLE_TITLE
-      input {
-        id: 'new-turtle-name'
-        type: 'text'
-        placeholder: 'Name a new turtle'
-        autofocus: true
-        keydown: (e) ->
-          if e.which == 13
-            create_sprite(@val(), sprites.length())
-            @val('')
-            false # In IE, don't set focus on the button(crazy!)
-            # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
-      }
+      input_turtle()
+      
       h1 "Controls"
+      h2 turtle.title
       ul [
         li nav_updown('North', '⬆')
         li [
@@ -76,8 +80,8 @@ Meteor.startup ->
         li nav_updown('South', '⬇')
       ]
       h1 "Roster"
-      ul {}, sprites.map (sprite) ->
-        li {}, [
+      ul sprites.map (sprite) ->
+        li [
           button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
           span {title: location_style(sprite)}, sprite.title
       ]
