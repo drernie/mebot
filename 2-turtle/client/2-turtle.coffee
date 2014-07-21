@@ -7,7 +7,7 @@ randomHexColor = (len=3)->
   pattern = '0123456789ABCDEF'.split ''                                                                                                                
   str     = '#'                                                                                                                                        
   for i in [1..len]                                                                                                                                    
-    str += pattern[Math.round(Math.random() * pattern.length)]                                                                                         
+    str += pattern[Math.floor(Math.random() * pattern.length)]                                                                                         
   str           
 
 create_sprite = (val, count) ->
@@ -15,7 +15,7 @@ create_sprite = (val, count) ->
   SpritesDB.insert
     title: val.trim()
     x: count % CANVAS_SIZE 
-    y: Math.round(count / CANVAS_SIZE) % CANVAS_SIZE
+    y: Math.floor(count / CANVAS_SIZE) % CANVAS_SIZE
     facing: 0
     url: 'images/turtle.png'
     color: randomHexColor()
