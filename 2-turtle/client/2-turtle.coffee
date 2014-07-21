@@ -11,11 +11,11 @@ randomHexColor = (len=3)->
   str           
 
 create_sprite = (val, count) ->
-  index = count % CANVAS_SIZE   
+  index =    
   SpritesDB.insert
     title: val.trim()
-    x: index 
-    y: index 
+    x: count % CANVAS_SIZE 
+    y: Math.round(count / CANVAS_SIZE) % CANVAS_SIZE
     facing: 0
     url: 'images/turtle.png'
     color: randomHexColor()
@@ -54,8 +54,8 @@ location_style = (sprite) ->
   "
     position: absolute;
     border: 0;
-    top: #{sprite.y * TURTLE_SCALE}px;
-    left: #{sprite.x * TURTLE_SCALE}px;
+    top: #{(0.5 + sprite.y) * TURTLE_SCALE}px;
+    left: #{(1.5 + sprite.x) * TURTLE_SCALE}px;
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
     background-color: #{sprite.color};
