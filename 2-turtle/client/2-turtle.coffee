@@ -25,13 +25,12 @@ input_turtle = ->
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
     
-nav_updown = (dir, arrow) ->
+nav_updown = (dir, arrow, callback) ->
   button {
     style: {width: 61}
     class: "submit-btn dir vertical #{dir}"
     title: dir
-    click: ->
-      if (dir == 'North') then turtle.y++ else turtle.y--
+    click: callback
   }, arrow
 
 nav_sides = (dir, arrow) ->
@@ -39,7 +38,11 @@ nav_sides = (dir, arrow) ->
     class: "submit-btn dir horizontal #{dir}"
     title: dir
     click: ->
-      if (dir == 'East') then turtle.x++ else turtle.x--
+      proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
+      if proxy?
+        turtle = proxy.x
+        offset = if (dir == 'East') then +1 else -1
+        SpritesDB.update turtle ._id, {$inc: {x: offset}}
   }, arrow
   
 location_style = (sprite) ->
@@ -53,6 +56,19 @@ location_style = (sprite) ->
     -webkit-transform: rotate(#{90*sprite.facing}deg);
   "
   
+footer = ->
+  div {
+    id: 'page-footer'
+    style: 'margin-top: 100px; text-align:center; text-shadow: white 0.1em 0.1em 0.1em;'
+  }, [
+    span 'Proudly built with '
+    span {
+      style: 'cursor: pointer; cursor: hand;'
+      click: ->
+        window.open 'https://github.com/zhouzhuojie/meteor-reactive-coffee'
+    }, 'Meteor-Reactive-Coffee'
+  ]
+  
 Meteor.startup ->
   bind = rx.bind
   rxt.importTags()
@@ -60,31 +76,33 @@ Meteor.startup ->
   # Put some data into tasks
   window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
   window.sprites = rx.meteor.find SpritesDB, {}, {sort:{created:-1}}
-  window.turtle = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
-	
+  window.proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
+  
   $ ->
     document.title = 'Turtle-Viewer'
-		
     $('body').prepend(
       h1 TURTLE_TITLE
       input_turtle()
       
-      h1 "Controls"
-      h2 turtle.title
-      ul [
-        li nav_updown('North', '⬆')
-        li [
-          button {class: 'submit-btn dir', title: 'West'}, ['◀︎']
-          button {class: 'submit-btn dir', title: 'East'}, ['►']
-        ]
-        li nav_updown('South', '⬇')
-      ]
       h1 "Roster"
       ul sprites.map (sprite) ->
         li [
           button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
           span {title: location_style(sprite)}, sprite.title
-      ]
+        ]
+      
+      h1 "Controls"
+      if proxy?
+        h2 proxy.x.title
+        ul [
+          li nav_updown 'North', '⬆', -> proxy.x.y++
+          li [
+            nav_sides 'West', '◀︎'
+            nav_sides 'East', '►'
+          ]
+          li nav_updown 'South', '⬇', => proxy.x.y--
+        ]
+      
       h1 "Canvas"
       div {
         class: 'canvas'
@@ -96,17 +114,7 @@ Meteor.startup ->
           style: location_style(sprite)
           src: sprite.url
           title: sprite.title
-          alt: sprite.title
+          alt: "#{sprite.title}'s Turtle"
         }
-      div {
-        id: 'page-footer'
-        style: 'margin-top: 100px; text-align:center; text-shadow: white 0.1em 0.1em 0.1em;'
-      }, [
-        span 'Proudly built with '
-        span {
-          style: 'cursor: pointer; cursor: hand;'
-          click: ->
-            window.open 'https://github.com/zhouzhuojie/meteor-reactive-coffee'
-        }, 'Meteor-Reactive-Coffee'
-      ]
+      footer()
     )
