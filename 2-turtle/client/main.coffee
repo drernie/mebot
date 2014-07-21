@@ -15,8 +15,12 @@ current_turtle = ->
   proxy.x
 
 clear_current_turtle = ->
-  current = current_turtle()
-  SpritesDB.update current._id, {$set: {isCurrent: false}}
+  turtle = current_turtle()
+  SpritesDB.update turtle._id, {$set: {isCurrent: false}}
+
+set_current_turtle = (turtle) ->
+  clear_current_turtle()
+  SpritesDB.update turtle._id, {$set: {isCurrent: true}}
    
 create_sprite = (val, count) ->
   clear_current_turtle()
@@ -132,6 +136,8 @@ Meteor.startup ->
             src: sprite.url
             title: sprite.title
             alt: "#{sprite.title}'s Turtle"
+            click: ->
+              set_current_turtle(sprite)
           }
         footer()
       ]
