@@ -86,7 +86,7 @@ Meteor.startup ->
   $ ->
     document.title = 'Turtle-Viewer'
     $('body').prepend(
-      div {style: "position: absolute"}, [
+      div {style: "position: absolute; top: 0; left: 0; margin-left: 1em;"}, [
         h1 TURTLE_TITLE
       
         h2 "Controls"
