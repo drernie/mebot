@@ -1,4 +1,4 @@
-TURTLE_TITLE = "Rohan\'s Turtle"
+TURTLE_TITLE = "Rohan\'s Reactive Turtles"
 TURTLE_SCALE = 100
 
 create_sprite = (val, count) ->
@@ -24,6 +24,10 @@ input_turtle = ->
         false # In IE, don't set focus on the button(crazy!)
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
+  
+current_turtle = ->
+  proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
+  proxy.x._id
     
 nav_action = (dir, arrow, delta) ->
   button {
@@ -31,8 +35,7 @@ nav_action = (dir, arrow, delta) ->
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}  
-      SpritesDB.update proxy.x._id, {$inc: delta} if proxy?
+      SpritesDB.update current_turtle(), {$inc: delta}
   }, arrow
 
 location_style = (sprite) ->
@@ -70,38 +73,39 @@ Meteor.startup ->
   $ ->
     document.title = 'Turtle-Viewer'
     $('body').prepend(
-      h1 TURTLE_TITLE
-      input_turtle()
+      div {style: "position: absolute"}, [
+        h1 TURTLE_TITLE
       
-      h1 "Roster"
-      ul sprites.map (sprite) ->
-        li [
-          button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
-          span {title: location_style(sprite)}, sprite.title
+        h2 "Controls"
+        ul [
+          li nav_action 'North', '⬆', {y: -1}
+          li [
+            nav_action 'West', '◀︎', {x: -1}
+            nav_action 'East', '►', {x: 1}
+          ]
+          li nav_action 'South', '⬇', {y: 1}
         ]
       
-      h1 "Controls"
-      ul [
-        li nav_action 'North', '⬆', {y: -1}
-        li [
-          nav_action 'West', '◀︎', {x: -1}
-          nav_action 'East', '►', {x: 1}
-        ]
-        li nav_action 'South', '⬇', {y: 1}
+        h2 "Roster"
+        ul sprites.map (sprite) ->
+          li [
+            button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
+            span {title: location_style(sprite)}, sprite.title
+          ]
+        p input_turtle()
+      
+        div {
+          class: 'canvas'
+          style:
+            width: 10 * TURTLE_SCALE
+            height: 10 * TURTLE_SCALE
+        }, sprites.map (sprite) ->
+          img {
+            style: location_style(sprite)
+            src: sprite.url
+            title: sprite.title
+            alt: "#{sprite.title}'s Turtle"
+          }
+        footer()
       ]
-      
-      h1 "Canvas"
-      div {
-        class: 'canvas'
-        style:
-          width: 10 * TURTLE_SCALE
-          height: 10 * TURTLE_SCALE
-      }, sprites.map (sprite) ->
-        img {
-          style: location_style(sprite)
-          src: sprite.url
-          title: sprite.title
-          alt: "#{sprite.title}'s Turtle"
-        }
-      footer()
     )
