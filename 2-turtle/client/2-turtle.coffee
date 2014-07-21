@@ -1,8 +1,9 @@
 TURTLE_TITLE = "Rohan\'s Reactive Turtles"
 TURTLE_SCALE = 100
+CANVAS_SIZE = 6
 
 create_sprite = (val, count) ->
-  index = count % 6 
+  index = count % CANVAS_SIZE   
   SpritesDB.insert
     title: val.trim()
     x: index 
@@ -27,15 +28,17 @@ input_turtle = ->
   
 current_turtle = ->
   proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
-  proxy.x._id
+  proxy.x
     
 nav_action = (dir, arrow, delta) ->
   button {
-    style: {width: 61}
+    style: {width: 61} if delta.y?
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      SpritesDB.update current_turtle(), {$inc: delta}
+      turtle = current_turtle()
+      SpritesDB.update turtle._id, {$inc: delta}
+      CommandsDB.insert {title: turtle.title, move: delta}
   }, arrow
 
 location_style = (sprite) ->
@@ -93,12 +96,20 @@ Meteor.startup ->
             span {title: location_style(sprite)}, sprite.title
           ]
         p input_turtle()
+
+        h2 "Commands"
+        h3 commands.length
+        ul commands.map (command) ->
+          li [
+            button {class: 'destroy', click: -> CommandsDB.remove command._id}, "X"
+            span "#{command.title}: #{Object.keys command.move} #{command.move.x || command.move.y}"
+          ]
       
         div {
           class: 'canvas'
           style:
-            width: 10 * TURTLE_SCALE
-            height: 10 * TURTLE_SCALE
+            width: CANVAS_SIZE * TURTLE_SCALE
+            height: CANVAS_SIZE * TURTLE_SCALE
         }, sprites.map (sprite) ->
           img {
             style: location_style(sprite)
