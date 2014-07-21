@@ -13,8 +13,15 @@ randomHexColor = (len=3)->
 current_turtle = ->
   proxy = rx.meteor.findOne SpritesDB, {isCurrent: true}, {sort:{created:-1}}
   proxy.x
+  
+clear_commands = ->
+  old_commands = CommandsDB.find()
+  old_commands.forEach (command) ->
+    console.log(command)
+    CommandsDB.remove command._id
 
 clear_current_turtle = ->
+  clear_commands()
   turtle = current_turtle()
   SpritesDB.update turtle._id, {$set: {isCurrent: false}}
 
