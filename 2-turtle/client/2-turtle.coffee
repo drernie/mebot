@@ -2,6 +2,14 @@ TURTLE_TITLE = "Rohan\'s Reactive Turtles"
 TURTLE_SCALE = 100
 CANVAS_SIZE = 6
 
+# https://gist.github.com/michiel/5240409
+randomHexColor = (len=3)->                                                                                                                             
+  pattern = '0123456789ABCDEF'.split ''                                                                                                                
+  str     = '#'                                                                                                                                        
+  for i in [1..len]                                                                                                                                    
+    str += pattern[Math.round(Math.random() * pattern.length)]                                                                                         
+  str           
+
 create_sprite = (val, count) ->
   index = count % CANVAS_SIZE   
   SpritesDB.insert
@@ -10,8 +18,9 @@ create_sprite = (val, count) ->
     y: index 
     facing: 0
     url: 'images/turtle.png'
-    created: new Date
-    
+    color: randomHexColor()
+    created: new Date  
+  
 input_turtle = ->
   input {
     id: 'new-turtle-name'
@@ -49,6 +58,7 @@ location_style = (sprite) ->
     left: #{sprite.x * TURTLE_SCALE}px;
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
+    background-color: #{sprite.color};
     -webkit-transform: rotate(#{90*sprite.facing}deg);
   "
   
