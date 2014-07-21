@@ -68,7 +68,7 @@ location_style = (sprite) ->
     left: #{(1.5 + sprite.x) * TURTLE_SCALE}px;
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
-    background-color: #{sprite.color};
+    background-color: #{if sprite.isCurrent then '#FFF' else sprite.color};
     -webkit-transform: rotate(#{90*sprite.facing}deg);
   "
   
@@ -113,7 +113,12 @@ Meteor.startup ->
         ul sprites.map (sprite) ->
           li [
             button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
-            span {title: location_style(sprite)}, sprite.title
+            span {
+              title: location_style(sprite)
+              style:
+                font_weight: 'bold' if sprite.isCurrent
+              
+            }, sprite.title
           ]
         p input_turtle()
 
