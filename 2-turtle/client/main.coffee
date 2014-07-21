@@ -10,7 +10,16 @@ randomHexColor = (len=3)->
     str += pattern[Math.floor(Math.random() * pattern.length)]                                                                                         
   str           
 
+current_turtle = ->
+  proxy = rx.meteor.findOne SpritesDB, {isCurrent: true}, {sort:{created:-1}}
+  proxy.x
+
+clear_current_turtle = ->
+  current = current_turtle()
+  SpritesDB.update current._id, {$set: {isCurrent: false}}
+   
 create_sprite = (val, count) ->
+  clear_current_turtle()
   index =    
   SpritesDB.insert
     title: val.trim()
@@ -19,6 +28,7 @@ create_sprite = (val, count) ->
     facing: 0
     url: 'images/turtle.png'
     color: randomHexColor()
+    isCurrent: true
     created: new Date  
   
 input_turtle = ->
@@ -34,10 +44,6 @@ input_turtle = ->
         false # In IE, don't set focus on the button(crazy!)
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
-  
-current_turtle = ->
-  proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
-  proxy.x
     
 nav_action = (dir, arrow, delta) ->
   button {
