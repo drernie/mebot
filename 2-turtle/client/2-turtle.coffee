@@ -25,26 +25,16 @@ input_turtle = ->
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
     
-nav_updown = (dir, arrow, callback) ->
+nav_action = (dir, arrow, delta) ->
   button {
     style: {width: 61}
-    class: "submit-btn dir vertical #{dir}"
-    title: dir
-    click: callback
-  }, arrow
-
-nav_sides = (dir, arrow) ->
-  button {
-    class: "submit-btn dir horizontal #{dir}"
+    class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
-      if proxy?
-        turtle = proxy.x
-        offset = if (dir == 'East') then +1 else -1
-        SpritesDB.update turtle ._id, {$inc: {x: offset}}
+      proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}  
+      SpritesDB.update proxy.x._id, {$inc: delta} if proxy?
   }, arrow
-  
+
 location_style = (sprite) ->
   "
     position: absolute;
@@ -76,7 +66,6 @@ Meteor.startup ->
   # Put some data into tasks
   window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
   window.sprites = rx.meteor.find SpritesDB, {}, {sort:{created:-1}}
-  window.proxy = rx.meteor.findOne SpritesDB, {}, {sort:{created:-1}}
   
   $ ->
     document.title = 'Turtle-Viewer'
@@ -92,16 +81,14 @@ Meteor.startup ->
         ]
       
       h1 "Controls"
-      if proxy?
-        h2 proxy.x.title
-        ul [
-          li nav_updown 'North', '⬆', -> proxy.x.y++
-          li [
-            nav_sides 'West', '◀︎'
-            nav_sides 'East', '►'
-          ]
-          li nav_updown 'South', '⬇', => proxy.x.y--
+      ul [
+        li nav_action 'North', '⬆', {y: -1}
+        li [
+          nav_action 'West', '◀︎', {x: -1}
+          nav_action 'East', '►', {x: 1}
         ]
+        li nav_action 'South', '⬇', {y: 1}
+      ]
       
       h1 "Canvas"
       div {
