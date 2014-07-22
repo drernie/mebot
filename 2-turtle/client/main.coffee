@@ -58,7 +58,7 @@ input_turtle = ->
     
 nav_action = (dir, arrow, delta) ->
   button {
-    style: {width: 61} if delta.y?
+    style: {font_size: 24}
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
@@ -75,7 +75,7 @@ location_style = (sprite) ->
     left: #{(1.5 + sprite.x) * TURTLE_SCALE}px;
     width: #{TURTLE_SCALE}px;
     height: #{TURTLE_SCALE}px;
-    background-color: #{if sprite.isCurrent then '#FFF' else sprite.color};
+    background-color: #{if sprite.isCurrent then sprite.color else '#FFF'};
     -webkit-transform: rotate(#{90*sprite.facing}deg);
   "
   
@@ -107,13 +107,22 @@ Meteor.startup ->
         h1 TURTLE_TITLE
       
         h2 "Controls"
-        ul [
-          li nav_action 'North', '⬆', {y: -1}
-          li [
-            nav_action 'West', '◀︎', {x: -1}
-            nav_action 'East', '►', {x: 1}
+        table [
+          tr [
+            td ""
+            td nav_action 'North', '▲', {y: -1}
+            td ""
           ]
-          li nav_action 'South', '⬇', {y: 1}
+          tr [
+            td nav_action 'West', '◀︎', {x: -1}
+            td nav_action 'Turn', '⟳', {facing: 1}
+            td nav_action 'East', '►', {x: 1}
+          ]
+          tr [
+            td ""
+            td nav_action 'South', '▼', {y: 1}
+            td ""
+          ]
         ]
       
         h2 "Roster"
@@ -123,8 +132,8 @@ Meteor.startup ->
             span {
               title: location_style(sprite)
               style:
+                color: sprite.color
                 font_weight: 'bold' if sprite.isCurrent
-              
             }, sprite.title
           ]
         p input_turtle()
@@ -134,7 +143,7 @@ Meteor.startup ->
         ul commands.map (command) ->
           li [
             button {class: 'destroy', click: -> CommandsDB.remove command._id}, "X"
-            span "#{command.title}: #{Object.keys command.move} #{command.move.x || command.move.y}"
+            span "#{command.title}: #{Object.keys command.move} #{command.move.x || command.move.y || command.move.facing}"
           ]
       
         div {
