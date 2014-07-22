@@ -28,14 +28,22 @@ clear_current_turtle = ->
 set_current_turtle = (turtle) ->
   clear_current_turtle()
   SpritesDB.update turtle._id, {$set: {isCurrent: true}}
-   
-create_sprite = (val, count) ->
-  clear_current_turtle()
-  index =    
-  SpritesDB.insert
-    title: val.trim()
+
+starting_at = (count) ->
+  {
     x: count % CANVAS_SIZE 
     y: Math.floor(count / CANVAS_SIZE) % CANVAS_SIZE
+  }
+
+create_sprite = (val, count) ->
+  start = starting_at(count)
+  clear_current_turtle()
+  SpritesDB.insert
+    title: val.trim()
+    x0: start.x
+    y0: start.y
+    x: start.x 
+    y: start.y
     facing: 0
     url: 'images/turtle.png'
     color: randomHexColor()
@@ -55,7 +63,12 @@ input_turtle = ->
         false # In IE, don't set focus on the button(crazy!)
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
-    
+
+
+reset_turtle = ->
+      turtle = current_turtle()
+      SpritesDB.update turtle._id, {$set: {x: turtle.x0, y: turtle.y0}}
+
 nav_action = (dir, arrow, delta) ->
   button {
     style: {font_size: 24}
@@ -64,7 +77,8 @@ nav_action = (dir, arrow, delta) ->
     click: ->
       turtle = current_turtle()
       SpritesDB.update turtle._id, {$inc: delta}
-      CommandsDB.insert {title: turtle.title, move: delta}
+      turtle = current_turtle()
+      CommandsDB.insert {title: turtle.title, move: delta, pos: {x: turtle.x, y: turtle.y, facing: turtle.facing}}
   }, arrow
 
 location_style = (sprite) ->
@@ -139,11 +153,23 @@ Meteor.startup ->
         p input_turtle()
 
         h2 "Commands"
-        h3 commands.length
+        span [
+          button {
+            class: 'commands clear'
+            click: -> clear_commands()
+          }, "Clear"
+          button {
+            class: 'commands clear'
+            click: -> clear_commands()
+          }, "Reset"
+          p "Return"
+          p ""
+          p "Step"
+        ] 
         ul commands.map (command) ->
           li [
             button {class: 'destroy', click: -> CommandsDB.remove command._id}, "X"
-            span "#{command.title}: #{Object.keys command.move} #{command.move.x || command.move.y || command.move.facing}"
+            span "#{command.title}: #{JSON.stringify(command.move)} @ #{JSON.stringify(command.pos)}"
           ]
       
         div {
