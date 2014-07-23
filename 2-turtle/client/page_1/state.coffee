@@ -1,4 +1,4 @@
-({sprites}) ->
+@page_1_state = ({sprites}) ->
   heading: "Rock-N-Roll Turtles"
   subheading: "Page 1"
   contents:
@@ -9,4 +9,4 @@
     ]
     Roster: sprites.map (sprite) ->
       destroy_button: "X"
-      sprite_listing: {title, x, y, facing, color, isCurrent} = sprite
+      sprite_listin: {title, x, y, facing, color, isCurrent} = sprite
