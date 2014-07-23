@@ -9,4 +9,4 @@
     ]
     Roster: sprites.map (sprite) ->
       destroy_button: "X"
-      sprite_listin: {title, x, y, facing, color, isCurrent} = sprite
+      sprite_listing: {title, x, y, facing, color, isCurrent} = sprite

@@ -1,6 +1,6 @@
 @page_1_church = ->
   Roster:
-    sprite: ({title, x, y, facing, color, isCurrent}) ->
+    sprite_listing: ({title, x, y, facing, color, isCurrent}) ->
       TURTLE_SCALE = 100
       style = "
         position: absolute;
