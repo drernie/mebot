@@ -1,12 +1,12 @@
 ({sprites}) ->
-  title: "Rock-N-Roll Turtles"
-  subtitle: "Page 1"
+  heading: "Rock-N-Roll Turtles"
+  subheading: "Page 1"
   contents:
-    controls: [
+    Controls: [
       'North'
       ['West','East']
       'South'
     ]
-    roster: sprites.map (sprite) ->
+    Roster: sprites.map (sprite) ->
       destroy_button: "X"
-      sprite: {title, x, y, facing, color, isCurrent} = sprite
+      sprite_listing: {title, x, y, facing, color, isCurrent} = sprite
