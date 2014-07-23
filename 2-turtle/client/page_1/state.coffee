@@ -1,11 +1,10 @@
-page_1 = ({sprites}) ->
+({sprites}) ->
   title: "Rock-N-Roll Turtles"
   subtitle: "Page 1"
   contents:
     controls: [
       'North'
-      'West'
-      'East'
+      ['West','East']
       'South'
     ]
     roster: sprites.map (sprite) ->
