@@ -9,6 +9,10 @@ class @Database
 
   set: (doc, dict) ->
     @db.update doc._id, {$set: dict}
+
+  get: (dict={}) ->
+    proxy = rx.meteor.findOne @db, dict, {sort:{created:-1}}
+    proxy.x
   
   destroy: (doc) ->
     @db.remove doc._id

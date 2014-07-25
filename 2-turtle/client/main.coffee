@@ -11,8 +11,7 @@ randomHexColor = (len=3)->
   str           
 
 current_turtle = ->
-  proxy = rx.meteor.findOne SpritesDB, {isCurrent: true}, {sort:{created:-1}}
-  proxy.x
+  Sprite.get {isCurrent: true}
   
 clear_commands = ->
   old_commands = CommandsDB.find()
