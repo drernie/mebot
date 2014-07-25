@@ -112,7 +112,7 @@ Meteor.startup ->
 
   # Put some data into tasks
   window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
-  window.sprites = rx.meteor.find SpritesDB, {}, {sort:{created:-1}}
+  window.sprites = @Sprite.all()
   
   $ ->
     document.title = 'Turtle-Viewer'
@@ -142,7 +142,7 @@ Meteor.startup ->
         h2 "Roster"
         ul sprites.map (sprite) ->
           li [
-            button {class: 'destroy', click: -> SpritesDB.remove sprite._id}, "X"
+            button {class: 'destroy', click: -> Sprite.destroy doc}, "X"
             span {
               title: location_style(sprite)
               style:
