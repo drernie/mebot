@@ -37,7 +37,7 @@ starting_at = (count) ->
 create_sprite = (val, count) ->
   start = starting_at(count)
   clear_current_turtle()
-  Sprite.create
+  SpritesDB.insert
     title: val.trim()
     x0: start.x
     y0: start.y
@@ -141,7 +141,7 @@ Meteor.startup ->
         h2 "Roster"
         ul sprites.map (sprite) ->
           li [
-            button {class: 'destroy', click: -> Sprite.destroy doc}, "X"
+            button {class: 'destroy', click: -> Sprite.destroy sprite}, "X"
             span {
               title: location_style(sprite)
               style:
