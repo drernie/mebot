@@ -22,11 +22,11 @@ clear_commands = ->
 clear_current_turtle = ->
   clear_commands()
   turtle = current_turtle()
-  SpritesDB.update turtle._id, {$set: {isCurrent: false}}
+  Sprite.set turtle, {isCurrent: false}
 
 set_current_turtle = (turtle) ->
   clear_current_turtle()
-  Sprite.set(turtle, {isCurrent: true})
+  Sprite.set turtle, {isCurrent: true}
 
 starting_at = (count) ->
   {
@@ -66,7 +66,7 @@ input_turtle = ->
 
 reset_turtle = ->
       turtle = current_turtle()
-      SpritesDB.update turtle._id, {$set: {x: turtle.x0, y: turtle.y0}}
+      Sprite.set turtle, {x: turtle.x0, y: turtle.y0}
 
 nav_action = (dir, arrow, delta) ->
   button {
@@ -75,7 +75,7 @@ nav_action = (dir, arrow, delta) ->
     title: dir
     click: ->
       turtle = current_turtle()
-      SpritesDB.update turtle._id, {$inc: delta}
+      Sprite.add turtle, delta
       turtle = current_turtle()
       CommandsDB.insert {title: turtle.title, move: delta, pos: {x: turtle.x, y: turtle.y, facing: turtle.facing}}
   }, arrow
@@ -111,7 +111,7 @@ Meteor.startup ->
 
   # Put some data into tasks
   window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
-  window.sprites = @Sprite.all()
+  window.sprites = Sprite.all()
   
   $ ->
     document.title = 'Turtle-Viewer'

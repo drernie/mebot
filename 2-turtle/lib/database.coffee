@@ -7,12 +7,15 @@ class @Database
   create: (dict)->
     @db.insert dict
 
-  set: (doc, dict) ->
-    @db.update doc._id, {$set: dict}
-
   get: (dict={}) ->
     proxy = rx.meteor.findOne @db, dict, {sort:{created:-1}}
     proxy.x
+
+  set: (doc, dict) ->
+    @db.update doc._id, {$set: dict}
+
+  add: (doc, dict) ->
+    @db.update doc._id, {$inc: dict}
   
   destroy: (doc) ->
     @db.remove doc._id
