@@ -1,3 +1,0 @@
-@render = (json) ->
-  div "#{json}"
-  
