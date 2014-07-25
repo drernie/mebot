@@ -37,7 +37,7 @@ starting_at = (count) ->
 create_sprite = (val, count) ->
   start = starting_at(count)
   clear_current_turtle()
-  SpritesDB.insert
+  Sprite.create
     title: val.trim()
     x0: start.x
     y0: start.y
