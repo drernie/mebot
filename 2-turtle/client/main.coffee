@@ -27,7 +27,7 @@ clear_current_turtle = ->
 
 set_current_turtle = (turtle) ->
   clear_current_turtle()
-  SpritesDB.update turtle._id, {$set: {isCurrent: true}}
+  Sprite.set(turtle, {isCurrent: true})
 
 starting_at = (count) ->
   {
