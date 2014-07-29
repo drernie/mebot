@@ -1,6 +1,4 @@
 TURTLE_TITLE = "Rohan\'s Reactive Turtles"
-CANVAS_SCALE = 100
-CANVAS_SIZE = 6
 
 clear_commands = ->
   old_commands = CommandsDB.find()
@@ -28,7 +26,7 @@ nav_action = (dir, arrow, delta) ->
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      turtle = current_turtle()
+      turtle = Sprite.current_turtle()
       Sprite.add turtle, delta
   }, arrow
   
@@ -80,7 +78,6 @@ Meteor.startup ->
       
         h2 "Roster"
         ul sprites.map (sprite) ->
-          console.log("sprite #{sprite}")
           li [
             button {class: 'destroy', click: -> Sprite.destroy sprite}, "X"
             span {
@@ -114,17 +111,15 @@ Meteor.startup ->
       
         div {
           class: 'canvas'
-          style:
-            width: CANVAS_SIZE * CANVAS_SCALE
-            height: CANVAS_SIZE * CANVAS_SCALE
+          style: Sprite.canvas_style()
         }, sprites.map (sprite) ->
           img {
-            style: location_style(sprite)
+            style: Sprite.location_style(sprite)
             src: sprite.url
             title: sprite.title
             alt: "#{sprite.title}'s Turtle"
             click: ->
-              set_current_turtle(sprite)
+              Sprite.set_current_turtle(sprite)
           }
         footer()
       ]

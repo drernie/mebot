@@ -39,6 +39,10 @@ class @Sprites extends Database
 
   reset_turtle: ->
     set @current, {x: @current.x0, y: @current.y0}
+    
+  canvas_style: ->
+    width: @size * @scale
+    height: @size * @scale
 
   location_style: (sprite) ->
     "
