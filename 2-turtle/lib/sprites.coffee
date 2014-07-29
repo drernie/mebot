@@ -9,7 +9,6 @@ randomHexColor = (len=3)->
 class @Sprites extends Database
   constructor: (@db, @size, @scale) ->
     super(@db)
-    #@current = get()  
 
   starting_points: ->
     count = @db.length
@@ -31,17 +30,20 @@ class @Sprites extends Database
       color: randomHexColor()
       created: new Date  
 
+  active: ->
+    @current ||= @get()
+
   is_active: (turtle) ->
     @current == turtle
-
-  active: ->
-    @current
 
   set_active: (turtle) ->
     @current = turtle 
 
   reset_active: ->
     set @current, {x: @current.x0, y: @current.y0}
+
+  move_active: (delta) ->
+    Sprite.add @current, delta
     
   canvas_style: ->
     width: @size * @scale

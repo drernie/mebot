@@ -26,8 +26,7 @@ nav_action = (dir, arrow, delta) ->
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      turtle = Sprite.active()
-      Sprite.add turtle, delta
+      Sprite.move_active(delta)
   }, arrow
   
 controls = ->
@@ -69,6 +68,7 @@ Meteor.startup ->
   # Put some data into tasks
   window.commands = Command.all()
   window.sprites = Sprite.all()
+  Sprite.active()
   
   $ ->
     document.title = TURTLE_TITLE
