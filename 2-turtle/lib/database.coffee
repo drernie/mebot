@@ -2,7 +2,8 @@ class @Database
   constructor: (@db) ->
     
   all: ->
-    rx.meteor.find @db, {}, {sort:{created:-1}}
+    proxy = rx.meteor.find @db, {}, {sort:{created:-1}}
+    proxy
 
   create: (dict)->
     @db.insert dict

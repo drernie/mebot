@@ -80,10 +80,11 @@ Meteor.startup ->
       
         h2 "Roster"
         ul sprites.map (sprite) ->
+          console.log("sprite #{sprite}")
           li [
             button {class: 'destroy', click: -> Sprite.destroy sprite}, "X"
             span {
-              title: location_style(sprite)
+              title: Sprite.location_style(sprite)
               style:
                 color: sprite.color
                 font_weight: 'bold' if sprite.isCurrent
