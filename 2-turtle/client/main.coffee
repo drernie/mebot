@@ -16,7 +16,7 @@ input_turtle = ->
     autofocus: true
     keydown: (e) ->
       if e.which == 13
-        create_sprite(@val(), sprites.length())
+        Sprite.create_named(@val())
         @val('')
         false # In IE, don't set focus on the button(crazy!)
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>

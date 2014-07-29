@@ -11,10 +11,15 @@ class @Sprites extends Database
     super(@db)
     #@current = get()  
 
-  starting_at = (count) -> {x: count % @size, y: Math.floor(count / @size) % @size}
+  starting_points: ->
+    count = @db.length
+    {
+      x: count % @size
+      y: Math.floor(count / @size) % @size
+    }
 
-  create_named = (name, count) ->
-    start = starting_at(count)
+  create_named: (name) ->
+    start = starting_points
     @current = create
       title: name.trim()
       x0: start.x
@@ -26,16 +31,16 @@ class @Sprites extends Database
       color: randomHexColor()
       created: new Date  
 
-  current_turtle = ->
+  current_turtle: ->
     @current
 
-  set_current_turtle = (turtle) ->
+  set_current_turtle: (turtle) ->
     @current = turtle 
 
-  reset_turtle = ->
+  reset_turtle: ->
     set @current, {x: @current.x0, y: @current.y0}
 
-  location_style = (sprite) ->
+  location_style: (sprite) ->
     "
       position: absolute;
       border: 0;
@@ -47,7 +52,7 @@ class @Sprites extends Database
       -webkit-transform: rotate(#{90*sprite.facing}deg);
     "
     
-    add_command: (delta) ->
-      "noop"
+  add_command: (delta) ->
+    "noop"
 
 #      CommandsDB.insert {title: turtle.title, move: delta, pos: {x: turtle.x, y: turtle.y, facing: turtle.facing}}
