@@ -31,13 +31,16 @@ class @Sprites extends Database
       color: randomHexColor()
       created: new Date  
 
-  current_turtle: ->
+  is_active: (turtle) ->
+    @current == turtle
+
+  active: ->
     @current
 
-  set_current_turtle: (turtle) ->
+  set_active: (turtle) ->
     @current = turtle 
 
-  reset_turtle: ->
+  reset_active: ->
     set @current, {x: @current.x0, y: @current.y0}
     
   canvas_style: ->

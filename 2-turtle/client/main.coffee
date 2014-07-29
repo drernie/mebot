@@ -6,7 +6,7 @@ clear_commands = ->
     console.log(command)
     CommandsDB.remove command._id
   
-input_turtle = ->
+turtle_input_field = ->
   input {
     id: 'new-turtle-name'
     type: 'text'
@@ -26,9 +26,28 @@ nav_action = (dir, arrow, delta) ->
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      turtle = Sprite.current_turtle()
+      turtle = Sprite.active()
       Sprite.add turtle, delta
   }, arrow
+  
+controls = ->
+  table [
+    tr [
+      td ""
+      td nav_action 'North', '▲', {y: -1}
+      td ""
+    ]
+    tr [
+      td nav_action 'West', '◀︎', {x: -1}
+      td nav_action 'Turn', '⟳', {facing: 1}
+      td nav_action 'East', '►', {x: 1}
+    ]
+    tr [
+      td ""
+      td nav_action 'South', '▼', {y: 1}
+      td ""
+    ]
+  ]
   
 footer = ->
   div {
@@ -58,23 +77,7 @@ Meteor.startup ->
         h1 TURTLE_TITLE
       
         h2 "Controls"
-        table [
-          tr [
-            td ""
-            td nav_action 'North', '▲', {y: -1}
-            td ""
-          ]
-          tr [
-            td nav_action 'West', '◀︎', {x: -1}
-            td nav_action 'Turn', '⟳', {facing: 1}
-            td nav_action 'East', '►', {x: 1}
-          ]
-          tr [
-            td ""
-            td nav_action 'South', '▼', {y: 1}
-            td ""
-          ]
-        ]
+        controls()
       
         h2 "Roster"
         ul sprites.map (sprite) ->
@@ -84,10 +87,10 @@ Meteor.startup ->
               title: Sprite.location_style(sprite)
               style:
                 color: sprite.color
-                font_weight: 'bold' if sprite.isCurrent
+                font_weight: 'bold' if Sprite.is_active(sprite)
             }, sprite.title
           ]
-        p input_turtle()
+        p turtle_input_field()
 
         h2 "Commands"
         span [
@@ -96,12 +99,9 @@ Meteor.startup ->
             click: -> clear_commands()
           }, "Clear"
           button {
-            class: 'commands clear'
-            click: -> clear_commands()
+            class: 'commands reset'
+            click: -> Sprite.reset_active()
           }, "Reset"
-          p "Return"
-          p ""
-          p "Step"
         ] 
         ul commands.map (command) ->
           li [
@@ -118,8 +118,7 @@ Meteor.startup ->
             src: sprite.url
             title: sprite.title
             alt: "#{sprite.title}'s Turtle"
-            click: ->
-              Sprite.set_current_turtle(sprite)
+            click: -> Sprite.set_active(sprite)
           }
         footer()
       ]
