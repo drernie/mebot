@@ -1,53 +1,12 @@
 TURTLE_TITLE = "Rohan\'s Reactive Turtles"
-TURTLE_SCALE = 100
+CANVAS_SCALE = 100
 CANVAS_SIZE = 6
 
-# https://gist.github.com/michiel/5240409
-randomHexColor = (len=3)->                                                                                                                             
-  pattern = '0123456789ABCDEF'.split ''                                                                                                                
-  str     = '#'                                                                                                                                        
-  for i in [1..len]                                                                                                                                    
-    str += pattern[Math.floor(Math.random() * pattern.length)]                                                                                         
-  str           
-
-current_turtle = ->
-  Sprite.get {isCurrent: true}
-  
 clear_commands = ->
   old_commands = CommandsDB.find()
   old_commands.forEach (command) ->
     console.log(command)
     CommandsDB.remove command._id
-
-clear_current_turtle = ->
-  clear_commands()
-  turtle = current_turtle()
-  Sprite.set turtle, {isCurrent: false}
-
-set_current_turtle = (turtle) ->
-  clear_current_turtle()
-  Sprite.set turtle, {isCurrent: true}
-
-starting_at = (count) ->
-  {
-    x: count % CANVAS_SIZE 
-    y: Math.floor(count / CANVAS_SIZE) % CANVAS_SIZE
-  }
-
-create_sprite = (val, count) ->
-  start = starting_at(count)
-  clear_current_turtle()
-  SpritesDB.insert
-    title: val.trim()
-    x0: start.x
-    y0: start.y
-    x: start.x 
-    y: start.y
-    facing: 0
-    url: 'images/turtle.png'
-    color: randomHexColor()
-    isCurrent: true
-    created: new Date  
   
 input_turtle = ->
   input {
@@ -63,11 +22,6 @@ input_turtle = ->
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
   }
 
-
-reset_turtle = ->
-      turtle = current_turtle()
-      Sprite.set turtle, {x: turtle.x0, y: turtle.y0}
-
 nav_action = (dir, arrow, delta) ->
   button {
     style: {font_size: 24}
@@ -76,21 +30,7 @@ nav_action = (dir, arrow, delta) ->
     click: ->
       turtle = current_turtle()
       Sprite.add turtle, delta
-      turtle = current_turtle()
-      CommandsDB.insert {title: turtle.title, move: delta, pos: {x: turtle.x, y: turtle.y, facing: turtle.facing}}
   }, arrow
-
-location_style = (sprite) ->
-  "
-    position: absolute;
-    border: 0;
-    top: #{(0.5 + sprite.y) * TURTLE_SCALE}px;
-    left: #{(1.5 + sprite.x) * TURTLE_SCALE}px;
-    width: #{TURTLE_SCALE}px;
-    height: #{TURTLE_SCALE}px;
-    background-color: #{if sprite.isCurrent then sprite.color else '#FFF'};
-    -webkit-transform: rotate(#{90*sprite.facing}deg);
-  "
   
 footer = ->
   div {
@@ -110,11 +50,11 @@ Meteor.startup ->
   rxt.importTags()
 
   # Put some data into tasks
-  window.commands = rx.meteor.find CommandsDB, {}, {sort:{created:-1}}
+  window.commands = Command.all()
   window.sprites = Sprite.all()
   
   $ ->
-    document.title = 'Turtle-Viewer'
+    document.title = TURTLE_TITLE
     $('body').prepend(
       div {style: "position: absolute; top: 0; left: 0; margin-left: 1em;"}, [
         h1 TURTLE_TITLE
@@ -174,8 +114,8 @@ Meteor.startup ->
         div {
           class: 'canvas'
           style:
-            width: CANVAS_SIZE * TURTLE_SCALE
-            height: CANVAS_SIZE * TURTLE_SCALE
+            width: CANVAS_SIZE * CANVAS_SCALE
+            height: CANVAS_SIZE * CANVAS_SCALE
         }, sprites.map (sprite) ->
           img {
             style: location_style(sprite)
