@@ -18,8 +18,8 @@ class @Sprites extends Database
     }
 
   create_named: (name) ->
-    start = starting_points
-    @current = create
+    start = @starting_points()
+    @current = @create
       title: name.trim()
       x0: start.x
       y0: start.y
@@ -40,10 +40,10 @@ class @Sprites extends Database
     @current = turtle 
 
   reset_active: ->
-    set @current, {x: @current.x0, y: @current.y0}
+    @set @current, {x: @current.x0, y: @current.y0}
 
   move_active: (delta) ->
-    Sprite.add @current, delta
+    @add @current, delta
     
   canvas_style: ->
     width: @size * @scale
