@@ -19,7 +19,7 @@ class @SpriteClass extends Database
 
   create_named: (name) ->
     start = @starting_points()
-    @current = @create
+    @create
       title: name.trim()
       x0: start.x
       y0: start.y
@@ -31,25 +31,30 @@ class @SpriteClass extends Database
       created: new Date  
 
   active: ->
-    @current ||= @get()
+    @get {isCurrent: true} || @get()
 
   is_active: (turtle) ->
-    @current == turtle
+    turtle.title == @active().title
+
+  clear_active: ->
+    @set @active, {isCurrent: false}
 
   set_active: (turtle) ->
-    @current = turtle 
+    @clear_active()
+    @set turtle, {isCurrent: true}
 
   reset_active: ->
-    @set @current, {x: @current.x0, y: @current.y0}
+    current = @active
+    @set current, {x: current.x0, y: current.y0}
 
   move_active: (delta) ->
-    @add @current, delta
+    @add @active, delta
     
   canvas_style: ->
     width: @size * @scale
     height: @size * @scale
 
-  location_style: (sprite) ->
+  location_style: (sprite) =>
     "
       position: absolute;
       border: 0;
@@ -57,7 +62,7 @@ class @SpriteClass extends Database
       left: #{(1.5 + sprite.x) * @scale}px;
       width: #{@scale}px;
       height: #{@scale}px;
-      background-color: #{if @current == sprite then sprite.color else '#FFF'};
+      background-color: #{if @is_active(sprite) then sprite.color else '#FFF'};
       -webkit-transform: rotate(#{90*sprite.facing}deg);
     "
     

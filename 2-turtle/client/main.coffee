@@ -66,9 +66,8 @@ Meteor.startup ->
   rxt.importTags()
 
   # Put some data into tasks
-  window.commands = Command.all()
-  window.sprites = Sprites.all()
-  Sprites.active()
+  window.commands = Command.find()
+  window.sprites = Sprites.find()
   
   $ ->
     document.title = TURTLE_TITLE
@@ -80,17 +79,20 @@ Meteor.startup ->
         controls()
       
         h2 "Roster"
-        p "Active sprite is #{Sprites.active()}"
-        ul sprites.map (sprite) ->
-          li [
-            button {class: 'destroy', click: -> Sprites.destroy sprite}, "X"
-            span {
-              title: Sprites.location_style(sprite)
-              style:
-                color: sprite.color
-                font_weight: 'bold' if Sprites.is_active(sprite)
-            }, sprite.title
-          ]
+        div bind -> [
+          p "active: #{Sprites.active().title}"
+          ul sprites.all().map (sprite) ->
+            li [
+              button {class: 'destroy', click: -> Sprites.destroy sprite}, "X"
+              span {
+                title: Sprites.location_style(sprite)
+                style:
+                  color: sprite.color
+                  font_weight: 'bold' if Sprites.is_active(sprite)
+              }, sprite.title
+              span " #{Sprites.is_active(sprite)}"
+            ]
+        ]
         p turtle_input_field()
 
         h2 "Commands"
@@ -110,17 +112,18 @@ Meteor.startup ->
             span "#{command.title}: #{JSON.stringify(command.move)} @ #{JSON.stringify(command.pos)}"
           ]
       
-        div {
-          class: 'canvas'
-          style: Sprites.canvas_style()
-        }, sprites.map (sprite) ->
-          img {
-            style: Sprites.location_style(sprite)
-            src: sprite.url
-            title: sprite.title
-            alt: "#{sprite.title}'s Turtle"
-            click: -> Sprites.set_active(sprite)
-          }
+        div bind ->
+          div {
+            class: 'canvas'
+            style: Sprites.canvas_style()
+          }, sprites.all().map (sprite) ->
+            img {
+              style: Sprites.location_style(sprite)
+              src: sprite.url
+              title: sprite.title
+              alt: "#{sprite.title}'s Turtle"
+              click: -> Sprites.set_active(sprite)
+            }
         footer()
       ]
     )

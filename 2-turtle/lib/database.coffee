@@ -1,19 +1,16 @@
 class @Database
   constructor: (@db) ->
     
-  all: ->
-    proxy = rx.meteor.find @db, {}, {sort:{created:-1}}
+  find: (query={}) ->
+    proxy = rx.meteor.find @db, query, {sort:{created:-1}}
     proxy
 
   create: (dict)->
     @db.insert dict
 
-  get: (dict={}) ->
-    #proxy = rx.meteor.findOne @db, dict, {sort:{created:-1}}
-    #proxy.x
-    items = @all().xs
-    n = items.length
-    items[n-1]
+  get: (query={}) ->
+    proxy = rx.meteor.findOne @db, query, {sort:{created:-1}}
+    proxy.x
 
   set: (doc, dict) ->
     @db.update doc._id, {$set: dict}
