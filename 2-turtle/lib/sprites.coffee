@@ -6,7 +6,7 @@ randomHexColor = (len=3)->
     str += pattern[Math.floor(Math.random() * pattern.length)]                                                                                         
   str           
     
-class @Sprites extends Database
+class @SpriteClass extends Database
   constructor: (@db, @size, @scale) ->
     super(@db)
 

@@ -1,4 +1,4 @@
-TURTLE_TITLE = "Rohan\'s Reactive Turtles"
+TURTLE_TITLE = "Teenage Robot Turtles"
 
 clear_commands = ->
   old_commands = CommandsDB.find()
@@ -14,7 +14,7 @@ turtle_input_field = ->
     autofocus: true
     keydown: (e) ->
       if e.which == 13
-        Sprite.create_named(@val())
+        Sprites.create_named(@val())
         @val('')
         false # In IE, don't set focus on the button(crazy!)
         # <http://stackoverflow.com/questions/12325066/button-click-event-fires-when-pressing-enter-key-in-different-input-no-forms>
@@ -26,7 +26,7 @@ nav_action = (dir, arrow, delta) ->
     class: "submit-btn dir #{Object.keys(delta)} #{dir}"
     title: dir
     click: ->
-      Sprite.move_active(delta)
+      Sprites.move_active(delta)
   }, arrow
   
 controls = ->
@@ -67,8 +67,8 @@ Meteor.startup ->
 
   # Put some data into tasks
   window.commands = Command.all()
-  window.sprites = Sprite.all()
-  Sprite.active()
+  window.sprites = Sprites.all()
+  Sprites.active()
   
   $ ->
     document.title = TURTLE_TITLE
@@ -80,14 +80,15 @@ Meteor.startup ->
         controls()
       
         h2 "Roster"
+        p "Active sprite is #{Sprites.active()}"
         ul sprites.map (sprite) ->
           li [
-            button {class: 'destroy', click: -> Sprite.destroy sprite}, "X"
+            button {class: 'destroy', click: -> Sprites.destroy sprite}, "X"
             span {
-              title: Sprite.location_style(sprite)
+              title: Sprites.location_style(sprite)
               style:
                 color: sprite.color
-                font_weight: 'bold' if Sprite.is_active(sprite)
+                font_weight: 'bold' if Sprites.is_active(sprite)
             }, sprite.title
           ]
         p turtle_input_field()
@@ -100,7 +101,7 @@ Meteor.startup ->
           }, "Clear"
           button {
             class: 'commands reset'
-            click: -> Sprite.reset_active()
+            click: -> Sprites.reset_active()
           }, "Reset"
         ] 
         ul commands.map (command) ->
@@ -111,14 +112,14 @@ Meteor.startup ->
       
         div {
           class: 'canvas'
-          style: Sprite.canvas_style()
+          style: Sprites.canvas_style()
         }, sprites.map (sprite) ->
           img {
-            style: Sprite.location_style(sprite)
+            style: Sprites.location_style(sprite)
             src: sprite.url
             title: sprite.title
             alt: "#{sprite.title}'s Turtle"
-            click: -> Sprite.set_active(sprite)
+            click: -> Sprites.set_active(sprite)
           }
         footer()
       ]
