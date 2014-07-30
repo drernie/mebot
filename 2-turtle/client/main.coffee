@@ -90,7 +90,6 @@ Meteor.startup ->
                   color: sprite.color
                   font_weight: 'bold' if Sprites.is_active(sprite)
               }, sprite.title
-              span " #{Sprites.is_active(sprite)}"
             ]
         ]
         p turtle_input_field()

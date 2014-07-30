@@ -36,8 +36,11 @@ class @SpriteClass extends Database
   is_active: (turtle) ->
     turtle.title == @active().title
 
-  clear_active: ->
-    @set @active, {isCurrent: false}
+  clear_active: =>
+    all_active = @find {isCurrent: true}
+    console.log(all_active)
+    all_active.all().map (sprite) ->
+      @set sprite, {isCurrent: false}
 
   set_active: (turtle) ->
     @clear_active()
